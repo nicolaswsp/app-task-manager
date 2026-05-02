@@ -1,0 +1,31 @@
+@"
+# Arquitetura de Componentes - Fluxo de Dados
+
+\`\`\`mermaid
+graph TD
+    Client["📱 Client"]
+    API["🔌 API Layer<br/>FastAPI Routes"]
+    Service["⚙️ Service Layer<br/>Business Logic"]
+    PriorityAdvisor["🎯 PriorityAdvisor<br/>Component"]
+    Repository["💾 Repository Layer<br/>Data Access"]
+    Database["🗄️ SQLite DB"]
+    
+    Client -->|HTTP Request| API
+    API -->|Call| Service
+    Service -->|Consult| PriorityAdvisor
+    Service -->|Query/Persist| Repository
+    Repository -->|SQL| Database
+    Database -->|Data| Repository
+    Repository -->|Result| Service
+    PriorityAdvisor -->|Priority Score| Service
+    Service -->|Response| API
+    API -->|HTTP Response| Client
+    
+    style Client fill:#e1f5ff
+    style API fill:#fff3e0
+    style Service fill:#f3e5f5
+    style PriorityAdvisor fill:#fce4ec
+    style Repository fill:#e8f5e9
+    style Database fill:#eceff1
+\`\`\`
+"@ | Out-File -FilePath docs/componentes-fluxo.md -Encoding UTF8
