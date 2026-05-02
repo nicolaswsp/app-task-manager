@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.pytest_cache/
+.pyre/
+.pytype/
+mypy_cache/
+cython_debug/
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+*.venv/
+*.env/
+.env.local
+.env.*.local
+
+# Build and packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Test cache and reports
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.cover
+*.py,cover
+
+# Editor and IDE local settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.pyproj
+*.swp
+*.tmp
+*.temp
+*.log
