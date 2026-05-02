@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 import re
-import urllib.error
 import urllib.request
 from typing import Optional
 
@@ -22,6 +21,7 @@ class PriorityAdvisor:
         if not text:
             return TaskStatus.PENDING
 
+        self._api_key = os.getenv("OPENAI_API_KEY")
         if self._api_key:
             llm_status = self._suggest_with_llm(title, description)
             if llm_status is not None:
@@ -80,7 +80,7 @@ class PriorityAdvisor:
         try:
             with urllib.request.urlopen(request, timeout=self._timeout) as response:
                 body = json.loads(response.read().decode("utf-8"))
-        except (urllib.error.URLError, urllib.error.HTTPError, ValueError):
+        except Exception:
             return None
 
         return self._parse_status(body)

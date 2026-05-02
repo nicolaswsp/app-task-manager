@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import sqlite3
+from contextlib import contextmanager
 from datetime import datetime, timezone
-from typing import List, Optional, TypedDict
+from typing import Iterator, List, Optional, TypedDict
 
 
 class TaskRow(TypedDict):
@@ -26,8 +27,17 @@ class TaskRepository:
         conn.row_factory = sqlite3.Row
         return conn
 
+    @contextmanager
+    def _connect(self) -> Iterator[sqlite3.Connection]:
+        conn = self._get_connection()
+        try:
+            yield conn
+            conn.commit()
+        finally:
+            conn.close()
+
     def _ensure_table(self) -> None:
-        with self._get_connection() as conn:
+        with self._connect() as conn:
             conn.execute(
                 """
                 CREATE TABLE IF NOT EXISTS tasks (
@@ -61,7 +71,7 @@ class TaskRepository:
         status: str,
     ) -> TaskRow:
         created_at = updated_at = self._now()
-        with self._get_connection() as conn:
+        with self._connect() as conn:
             cursor = conn.execute(
                 """
                 INSERT INTO tasks (title, description, status, created_at, updated_at)
@@ -75,12 +85,12 @@ class TaskRepository:
         return self._row_to_task(row)
 
     def list(self) -> List[TaskRow]:
-        with self._get_connection() as conn:
+        with self._connect() as conn:
             cursor = conn.execute("SELECT * FROM tasks ORDER BY id")
             return [self._row_to_task(row) for row in cursor.fetchall()]
 
     def get_by_id(self, task_id: int) -> Optional[TaskRow]:
-        with self._get_connection() as conn:
+        with self._connect() as conn:
             row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
         return self._row_to_task(row) if row else None
 
@@ -112,12 +122,12 @@ class TaskRepository:
         params.append(task_id)
         query = f"UPDATE tasks SET {', '.join(updates)} WHERE id = ?"
 
-        with self._get_connection() as conn:
+        with self._connect() as conn:
             conn.execute(query, tuple(params))
 
         return self.get_by_id(task_id)
 
     def delete(self, task_id: int) -> bool:
-        with self._get_connection() as conn:
+        with self._connect() as conn:
             cursor = conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
             return cursor.rowcount > 0
