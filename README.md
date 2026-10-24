@@ -224,7 +224,7 @@ uv run pytest
 Saida esperada:
 
 ```text
-28 passed
+32 passed
 ```
 
 Os testes cobrem:
@@ -233,6 +233,9 @@ Os testes cobrem:
 - Persistencia via repositorio SQLite.
 - Rotas HTTP com FastAPI `TestClient`.
 - Heuristicas e fallback do advisor de status.
+- Fluxos integrados entre API, servico e banco SQLite.
+
+Os prompts usados e os casos de integracao gerados estao registrados em [docs/testes-integracao-com-genai.md](./docs/testes-integracao-com-genai.md).
 
 ## Persistencia
 
@@ -272,6 +275,7 @@ app/
   main.py                   # Aplicacao FastAPI
 
 tests/
+  test_task_integration.py  # Fluxos integrados entre API, servico e SQLite
   test_task_routes.py       # Testes de API
   test_task_service.py      # Testes da camada de servico
   test_priority_advisor.py  # Testes da sugestao de status
